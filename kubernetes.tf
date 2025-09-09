@@ -40,6 +40,7 @@ resource "kubernetes_deployment" "beacon" {
     namespace = kubernetes_namespace.beacon.id
     labels = {
       app = var.application_name
+      env = "demo"
     }
   }
 
@@ -56,6 +57,7 @@ resource "kubernetes_deployment" "beacon" {
       metadata {
         labels = {
           app = var.application_name
+          env = "demo" 
         }
       }
 
