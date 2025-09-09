@@ -22,7 +22,7 @@ resource "datadog_monitor" "beacon" {
 
   # Fire if available replicas < 3 in the last 1 minute (chatty for demos)
   # NOTE: deployment metric tags are kube_namespace and kube_deployment by default.
-  query = "min(last_1m):sum:kube_deployment.status_replicas_available{kube_namespace:beacon,kube_deployment:beacon} < 3"
+  query = "min(last_1m):sum:kubernetes_state.deployment.replicas{kube_namespace:beacon,kube_deployment:beacon} < 3"
 
   monitor_thresholds {
     critical = 3  # MUST match the number in the query comparator
@@ -36,3 +36,9 @@ resource "datadog_monitor" "beacon" {
   # Monitor tags (metadata only; they don't filter the metric)
   tags = ["app:beacon", "env:demo"]
 }
+
+# Trigger
+## Scale down to 1 replica (triggers alert)
+# kubectl -n beacon scale deploy beacon --replicas=1
+## Restore when done
+# kubectl -n beacon scale deploy beacon --replicas=3
