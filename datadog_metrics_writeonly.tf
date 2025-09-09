@@ -30,13 +30,11 @@ resource "datadog_monitor" "beacon" {
   # Datadog query:
   # Check the number of running containers with short_image:beacon over the last 1m.
   # Trigger alert if count <= 1.
-  query = "max(last_1m):sum:kubernetes.containers.running{short_image:beacon} <= 1"
+  query = "min(last_5m):sum:kube_deployment.status_replicas_available{kube_namespace:beacon,kube_deployment:beacon,env:demo,app:beacon} < 2"
 
-  # Thresholds for OK, warning, and critical states
+  # Thresholds for critical states
   monitor_thresholds {
-    ok       = 3  # OK if >= 3 pods running
-    warning  = 2  # Warning if 2 pods running
-    critical = 1  # Critical if 1 or fewer pods running
+    critical  = 2  # Critical if 2 or fewer pods running
   }
 
   # Alert if no data is received

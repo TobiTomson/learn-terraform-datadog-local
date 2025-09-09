@@ -57,6 +57,10 @@ resource "helm_release" "datadog_agent" {
     { name = "securityAgent.runtime.enabled",    value = true },             # Enable runtime security agent
     { name = "datadog.hostVolumeMountPropagation", value = "HostToContainer" }, # Required volume propagation mode
     { name = "processAgent.enabled",                value = true },
-    { name = "orchestratorExplorer.enabled",        value = true }
+    { name = "orchestratorExplorer.enabled",        value = true },
+    { name = "kubeStateMetricsCore.enabled",     value = true },             # REQUIRED for Pod/Deployment health metrics
+    { name = "datadog.kubernetesLabelsAsTags.app", value = "app" },
+    { name = "datadog.kubernetesLabelsAsTags.env", value = "env" }
+
   ]
 }
