@@ -55,6 +55,8 @@ resource "helm_release" "datadog_agent" {
     { name = "systemProbe.enableTCPQueueLength", value = true },             # Collect TCP queue length
     { name = "systemProbe.enableOOMKill",        value = true },             # Monitor OOM kill events
     { name = "securityAgent.runtime.enabled",    value = true },             # Enable runtime security agent
-    { name = "datadog.hostVolumeMountPropagation", value = "HostToContainer" } # Required volume propagation mode
+    { name = "datadog.hostVolumeMountPropagation", value = "HostToContainer" }, # Required volume propagation mode
+    { name = "processAgent.enabled",                value = true },
+    { name = "orchestratorExplorer.enabled",        value = true }
   ]
 }
