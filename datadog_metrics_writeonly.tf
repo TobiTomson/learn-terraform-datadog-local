@@ -12,34 +12,27 @@ provider "datadog" {
 
 ###############################################################################
 # Datadog monitor resource
-# Defines an alert for Kubernetes pod health of the "beacon" app.
+# Chatty demo alert for Kubernetes deployment health of "beacon".
 ###############################################################################
 resource "datadog_monitor" "beacon" {
-  # Human-readable name of the monitor
-  name = "Kubernetes Pod Health"
+  name               = "Kubernetes Deployment Health (Demo)"
+  type               = "metric alert"
+  message            = "beacon deployment below expected availability. @operator"
+  escalation_message = "Please investigate the beacon deployment. @operator"
 
-  # Monitor type (metric alert: triggers on metric thresholds)
-  type = "metric alert"
+  # Fire if available replicas < 3 in the last 1 minute (chatty for demos)
+  # NOTE: deployment metric tags are kube_namespace and kube_deployment by default.
+  query = "min(last_1m):sum:kube_deployment.status_replicas_available{kube_namespace:beacon,kube_deployment:beacon} < 3"
 
-  # Message shown in the alert when triggered
-  message = "Kubernetes Pods are not in an optimal health state. Notify: @operator"
-
-  # Message shown when the issue escalates
-  escalation_message = "Please investigate the Kubernetes Pods, @operator"
-
-  # Datadog query:
-  # Check the number of running containers with short_image:beacon over the last 1m.
-  # Trigger alert if count <= 1.
-  query = "min(last_5m):sum:kube_deployment.status_replicas_available{kube_namespace:beacon,kube_deployment:beacon,env:demo,app:beacon} < 2"
-
-  # Thresholds for critical states
   monitor_thresholds {
-    critical  = 2  # Critical if 2 or fewer pods running
+    critical = 3  # MUST match the number in the query comparator
   }
 
-  # Alert if no data is received
-  notify_no_data = true
+  require_full_window = false  # alert fast within the minute
+  notify_no_data      = true
+  no_data_timeframe   = 5       # minutes
+  renotify_interval   = 10      # minutes
 
-  # Tags to classify this monitor in Datadog
+  # Monitor tags (metadata only; they don't filter the metric)
   tags = ["app:beacon", "env:demo"]
 }
