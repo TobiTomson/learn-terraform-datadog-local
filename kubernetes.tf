@@ -8,24 +8,8 @@ data "tfe_outputs" "eks" {
   workspace = var.tfc_workspace
 }
 
-/* Uncomment when using Terraform OSS
-data "terraform_remote_state" "eks" {
-  backend = "local"
-
-  config = {
-    path = "../learn-terraform-provision-eks-cluster/terraform.tfstate"
-  }
-}
-*/
-
-
 # Retrieve EKS cluster configuration
 data "aws_eks_cluster" "cluster" {
-  /* Uncomment when using Terraform OSS
-  name = data.terraform_remote_state.eks.outputs.cluster_name
-  */
-
-  // Remove when using Terraform OSS
   name = data.tfe_outputs.eks.values.cluster_name
 }
 
